@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Xmai.iml" filepath="$PROJECT_DIR$/Xmai.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xmai_fast_lib/xmai_fast_lib.iml" filepath="$PROJECT_DIR$/xmai_fast_lib/xmai_fast_lib.iml" />
     </modules>
   </component>
 </project>
