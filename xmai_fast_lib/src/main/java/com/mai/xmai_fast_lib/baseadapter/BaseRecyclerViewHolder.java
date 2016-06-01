@@ -41,6 +41,10 @@ public class BaseRecyclerViewHolder extends RecyclerView.ViewHolder implements V
         baseViewHolderImpl.setPosition(mRealPosition);
     }
 
+    public int getRealPosition() {
+        return mRealPosition;
+    }
+
     public void setOnItemLongClickListener(ROnItemLongClickListener onItemLongClickListener) {
         itemView.setOnLongClickListener(this);
         this.onItemLongClickListener = onItemLongClickListener;

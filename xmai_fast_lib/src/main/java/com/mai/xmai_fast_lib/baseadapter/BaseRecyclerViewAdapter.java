@@ -5,20 +5,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Switch;
 
 
 import com.mai.xmai_fast_lib.R;
+import com.mai.xmai_fast_lib.baseadapter.listener.RBaseAnimator;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnItemClickListener;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnItemLongClickListener;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnLoadingMoreListener;
 import com.mai.xmai_fast_lib.utils.MLog;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * 1、加头部和底部 16/5/23
  * 2、加上拉加载更多(仅支持LinearLayout) 16/5/24
+ * 3、加动画效果(预设一些动画效果，开发者可以另外加一些动画效果) 16/6/01
  * Created by mai on 16/4/29.
  */
 public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewHolder> {
@@ -38,6 +43,10 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     ROnLoadingMoreListener onLoadingMoreListener;
 
+    private RBaseAnimator mAnimator;
+    private int mLastAnimatorPosition = -1;
+    private boolean isRecycleAnimator = false;
+
     private boolean isLoadMoreComplete = false;
     private boolean isLoading = false;
 
@@ -50,6 +59,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     public void setData(List<T> mData) {
         this.mData = mData;
+        mLastAnimatorPosition = -1;
     }
 
     public List<T> getDatas() {
@@ -91,18 +101,17 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     @Override
     public void onBindViewHolder(BaseRecyclerViewHolder holder, int position) {
+
         switch (holder.getViewType()) {
             case VIEWTYPE_HEADER_VIEW: //头部
-                onLoadingMoreListener.onLoadingMore();
                 break;
             case VIEWTYPE_FOOTER_VIEW: //底部
                 break;
             case VIEWTYPE_LOADMORE_VIEW: //加载更多
-                MLog.log(position + "---" + isLoadMoreComplete);
                 if(!isLoadMoreComplete){ //还有更多
                     if(!isLoading) {
-                        onLoadingMoreListener.onLoadingMore();
                         isLoading = true;
+                        onLoadingMoreListener.onLoadingMore();
                         initLoadingView(holder.getBaseViewHolderImpl());
                     }
                 } else { //没有更多
@@ -112,7 +121,17 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
             case VIEWTYPE_DEFAULT_VIEW:
                 holder.setmRealPosition(position - getHearderCount());
                 initView(mData.get(position - getHearderCount()), holder.getBaseViewHolderImpl());
+                addAnimator(holder);
                 break;
+        }
+    }
+
+    protected void addAnimator(BaseRecyclerViewHolder holder){
+        if(isAnimator()){ //加动画效果
+            if(isRecycleAnimator || holder.getRealPosition() > mLastAnimatorPosition){
+                mAnimator.getAnimator(holder.itemView).start();
+                mLastAnimatorPosition = holder.getRealPosition();
+            }
         }
     }
 
@@ -129,19 +148,12 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         } else if (hasFooter() && position == mData.size() + getHearderCount()) {
             return VIEWTYPE_FOOTER_VIEW;
         } else if (isLoadMore() && position == mData.size() + getHearderCount() + getFooterCount()) {
+            MLog.log("VIEWTYPE_LOADMORE_VIEW  " + position);
             return VIEWTYPE_LOADMORE_VIEW;
         }
         return bindLayoutId(position - getHearderCount());
     }
 
-    /**
-     * 设置是否完成加载更多
-     * @param loadMoreComplete
-     */
-    public void setLoadMoreComplete(boolean loadMoreComplete) {
-        isLoadMoreComplete = loadMoreComplete;
-        notifyDataSetChanged();
-    }
 
     public void addDatas(List<T> newDatas){
         mData.addAll(newDatas);
@@ -160,13 +172,6 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         return onLoadingMoreListener != null;
     }
 
-    /**
-     * 加载更多的界面
-     * @return
-     */
-    protected int bindLoadingView() {
-        return R.layout.default_loading;
-    }
 
     protected void initLoadingView(BaseViewHolderImpl viewHolder){
         viewHolder.setVisibility(R.id.loading_view, View.VISIBLE)
@@ -254,4 +259,41 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
      * @param viewHolder
      */
     protected abstract void initView(T data, BaseViewHolderImpl viewHolder);
+
+    /**
+     * 加载更多的界面
+     * @return
+     */
+    protected int bindLoadingView() {
+        return R.layout.default_loading;
+    }
+
+    /**
+     * 设置是否完成加载更多
+     * @param loadMoreComplete
+     */
+    public void setLoadMoreComplete(boolean loadMoreComplete) {
+        isLoadMoreComplete = loadMoreComplete;
+        notifyDataSetChanged();
+    }
+
+    public boolean isAnimator(){
+        return mAnimator != null;
+    }
+
+    /**
+     * 设置动画效果
+     * @param animator
+     */
+    public void setAnimator(RBaseAnimator animator){
+        this.mAnimator = animator;
+    }
+
+    /**
+     * 设置是否重复动画
+     * @param recycleAnimator
+     */
+    public void setRecycleAnimator(boolean recycleAnimator) {
+        isRecycleAnimator = recycleAnimator;
+    }
 }
