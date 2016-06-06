@@ -5,6 +5,7 @@ import android.app.Application;
 import com.tencent.bugly.crashreport.CrashReport;
 
 /**
+ * 1、加入Bugly
  * Created by mai on 16/5/16.
  */
 public abstract class BaseApplication extends Application{

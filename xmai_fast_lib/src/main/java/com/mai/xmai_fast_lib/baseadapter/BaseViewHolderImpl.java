@@ -59,7 +59,7 @@ public class BaseViewHolderImpl {
     }
 
     /**
-     * 设置可见度
+     * 设置可见度（加上判断条件）
      *
      * @param resIds
      * @param visibility visible为false的时候设置不显示类型
@@ -86,11 +86,23 @@ public class BaseViewHolderImpl {
         return this;
     }
 
+    /**
+     * 设置tag
+     * @param resId
+     * @param tag
+     * @return
+     */
     public BaseViewHolderImpl setTag(int resId, Object tag) {
         findViewById(resId).setTag(tag);
         return this;
     }
 
+    /**
+     * 设置图片
+     * @param resId
+     * @param drawable
+     * @return
+     */
     public BaseViewHolderImpl setImageDrawable(int resId, Drawable drawable) {
         ((ImageView) findViewById(resId)).setImageDrawable(drawable);
         return this;
@@ -107,6 +119,12 @@ public class BaseViewHolderImpl {
         return this;
     }
 
+    /**
+     * 设置是否选中
+     * @param resId
+     * @param checked
+     * @return
+     */
     public BaseViewHolderImpl setChecked(int resId, boolean checked) {
         ((CompoundButton) findViewById(resId)).setChecked(checked);
         return this;
