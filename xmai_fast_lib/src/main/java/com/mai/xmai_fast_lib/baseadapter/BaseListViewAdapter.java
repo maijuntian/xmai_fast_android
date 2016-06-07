@@ -13,12 +13,12 @@ import java.util.List;
  *
  * @param <T>
  */
-public abstract class BaseListViewAdapter2<T> extends BaseAdapter {
+public abstract class BaseListViewAdapter<T> extends BaseAdapter {
 	
 	protected List<T> mData;
 	protected Context context;
 	
-	public BaseListViewAdapter2(List<T> mData){
+	public BaseListViewAdapter(List<T> mData){
 		this.mData = mData;
 	}
 	
@@ -40,7 +40,7 @@ public abstract class BaseListViewAdapter2<T> extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		context = parent.getContext();
-		BaseViewHolder2 baseViewHolder = BaseViewHolder2.get(convertView, parent, bindLayoutId(position));
+		BaseViewHolder baseViewHolder = BaseViewHolder.get(convertView, parent, bindLayoutId(position));
 		baseViewHolder.setPosition(position);
 		initView(mData.get(position), baseViewHolder);
 		return baseViewHolder.getView();
@@ -56,5 +56,5 @@ public abstract class BaseListViewAdapter2<T> extends BaseAdapter {
 	 * 将ViewHolder的控件跟内容绑定在一起
 	 * @param viewHolder   
 	 */
-	protected abstract void initView(T data, BaseViewHolder2 viewHolder);
+	protected abstract void initView(T data, BaseViewHolder viewHolder);
 }

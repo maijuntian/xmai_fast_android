@@ -10,12 +10,12 @@ import android.view.ViewGroup;
  * @author maijuntian
  * 
  */
-public class BaseViewHolder2 extends BaseViewHolderImpl{
+public class BaseViewHolder extends BaseViewHolderImpl{
 	
 
 	private int viewResId;
 
-	public BaseViewHolder2(View mView) {
+	public BaseViewHolder(View mView) {
 		super(mView);
 	}
 
@@ -28,15 +28,15 @@ public class BaseViewHolder2 extends BaseViewHolderImpl{
 	}
 
 
-	public static BaseViewHolder2 get(View convertView, ViewGroup parent, int layoutId){
-		BaseViewHolder2 viewHolder = null;
-        if (convertView == null || ((BaseViewHolder2) convertView.getTag()).getViewResId() != layoutId) {
+	public static BaseViewHolder get(View convertView, ViewGroup parent, int layoutId){
+		BaseViewHolder viewHolder = null;
+        if (convertView == null || ((BaseViewHolder) convertView.getTag()).getViewResId() != layoutId) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
-            viewHolder = new BaseViewHolder2(convertView);
+            viewHolder = new BaseViewHolder(convertView);
             viewHolder.setViewResId(layoutId);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (BaseViewHolder2) convertView.getTag();
+            viewHolder = (BaseViewHolder) convertView.getTag();
         }
         return viewHolder;
 	}

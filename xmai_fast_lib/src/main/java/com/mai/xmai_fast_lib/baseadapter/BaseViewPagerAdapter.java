@@ -38,7 +38,7 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = mViews.get(position);
-        BaseViewHolder2 baseViewHolder = BaseViewHolder2.get(view, container, bindLayoutId());
+        BaseViewHolder baseViewHolder = BaseViewHolder.get(view, container, bindLayoutId());
         initView(mData.get(position), baseViewHolder);
         baseViewHolder.setPosition(position);
         if(view == null)
@@ -58,7 +58,7 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
 	 * @param data  数据内容
 	 * @param viewHolder   
 	 */
-	protected abstract void initView(T data, BaseViewHolder2 viewHolder);
+	protected abstract void initView(T data, BaseViewHolder viewHolder);
 
 
     public void notifyUpdateView(int position) {

@@ -5,9 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.Switch;
 
 
 import com.mai.xmai_fast_lib.R;
@@ -17,7 +14,6 @@ import com.mai.xmai_fast_lib.baseadapter.listener.ROnItemLongClickListener;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnLoadingMoreListener;
 import com.mai.xmai_fast_lib.utils.MLog;
 
-import java.util.Date;
 import java.util.List;
 
 /**
