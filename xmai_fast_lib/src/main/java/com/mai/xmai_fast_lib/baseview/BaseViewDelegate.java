@@ -19,9 +19,7 @@ import butterknife.ButterKnife;
 /**
  * 带有标题栏的基础布局
  * 		可被自定义标题栏
- * @author mai
- *
- * @param <T>
+ * created by mai
  */
 public abstract class BaseViewDelegate<T extends BaseViewInter> extends AppDelegate {
 
@@ -81,7 +79,6 @@ public abstract class BaseViewDelegate<T extends BaseViewInter> extends AppDeleg
 	/**
 	 * 初始化标题栏
 	 * 
-	 * @param titleId
 	 */
 	public void initBaseTitleBar(int titleId) {
 		initBaseTitleBar(getString(titleId));

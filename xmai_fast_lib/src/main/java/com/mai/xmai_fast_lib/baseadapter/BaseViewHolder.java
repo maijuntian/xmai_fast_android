@@ -8,7 +8,7 @@ import android.view.ViewGroup;
  * ViewHolder基础类 <p/>
  * 解决adapter不用重新定义ViewHolder类
  * @author maijuntian
- * 
+ *
  */
 public class BaseViewHolder extends BaseViewHolderImpl{
 	

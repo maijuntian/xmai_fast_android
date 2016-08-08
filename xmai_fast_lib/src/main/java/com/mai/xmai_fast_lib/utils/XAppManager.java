@@ -34,6 +34,10 @@ public class XAppManager {
 		return instance;
 	}
 
+	public static Stack<Activity> getActivityStack() {
+		return activityStack;
+	}
+
 	/**
 	 * 添加Activity到堆栈
 	 */

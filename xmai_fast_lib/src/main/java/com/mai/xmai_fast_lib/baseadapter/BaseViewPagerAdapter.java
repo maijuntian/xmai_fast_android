@@ -56,7 +56,7 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
 	/**
 	 * 将ViewHolder的控件跟内容绑定在一起
 	 * @param data  数据内容
-	 * @param viewHolder   
+	 * @param viewHolder
 	 */
 	protected abstract void initView(T data, BaseViewHolder viewHolder);
 
