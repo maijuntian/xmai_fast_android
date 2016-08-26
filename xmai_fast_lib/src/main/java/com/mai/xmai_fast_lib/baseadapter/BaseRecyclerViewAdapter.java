@@ -167,6 +167,10 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         notifyDataSetChanged();
     }
 
+    public void notifyDataSet(){
+        isLoading = false;
+        notifyDataSetChanged();
+    }
 
     private boolean isLoadMore() {
         return onLoadingMoreListener != null;
@@ -274,6 +278,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
      */
     public void setLoadMoreComplete(boolean loadMoreComplete) {
         isLoadMoreComplete = loadMoreComplete;
+//        isLoading = false;
         notifyDataSetChanged();
     }
 

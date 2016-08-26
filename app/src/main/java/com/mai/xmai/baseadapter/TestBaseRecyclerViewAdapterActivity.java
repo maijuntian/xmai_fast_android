@@ -36,8 +36,8 @@ public class TestBaseRecyclerViewAdapterActivity extends Activity{
 
     RecyclerView recyclerView;
     TestBaseRecycleViewAdapter textRecycleViewAdapter;
-    final int COUNT = 100;
-    final int PAGESIZE = 20;
+    final int COUNT = 5;
+    final int PAGESIZE = 3;
     List<String> mDatas;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +86,8 @@ public class TestBaseRecyclerViewAdapterActivity extends Activity{
                         MLog.log("size:" + (mDatas.size() + newDats.size()));
                         if(mDatas.size() + newDats.size() > COUNT){
                             textRecycleViewAdapter.setLoadMoreComplete(true);
-                        } else {
-                            textRecycleViewAdapter.addDatas(newDats);
                         }
+                        textRecycleViewAdapter.addDatas(newDats);
                     }
                 }, new Action1<Throwable>() {
                     @Override

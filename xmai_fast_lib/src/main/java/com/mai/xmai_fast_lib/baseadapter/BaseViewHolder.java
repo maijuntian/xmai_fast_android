@@ -28,9 +28,9 @@ public class BaseViewHolder extends BaseViewHolderImpl{
 	}
 
 
-	public static BaseViewHolder get(View convertView, ViewGroup parent, int layoutId){
+	public static BaseViewHolder get(View convertView, ViewGroup parent, int layoutId, boolean isRecycle){
 		BaseViewHolder viewHolder = null;
-        if (convertView == null || ((BaseViewHolder) convertView.getTag()).getViewResId() != layoutId) {
+        if (!isRecycle || convertView == null || ((BaseViewHolder) convertView.getTag()).getViewResId() != layoutId) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
             viewHolder = new BaseViewHolder(convertView);
             viewHolder.setViewResId(layoutId);

@@ -38,7 +38,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".basehttp.BaseHttpActivity">
+        <activity android:name=".baseadapter.TestBaseRecyclerViewAdapterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
