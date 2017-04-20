@@ -16,6 +16,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.concurrent.TimeUnit;
 
 import retrofit.GsonConverterFactory;
+import retrofit.MyGsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import rx.Observable;
@@ -164,7 +165,7 @@ public abstract class BaseRetrofitService<T> {
             }
         });
         client.setRetryOnConnectionFailure(true);
-        mService = builder.baseUrl(getBaseUrl()).addCallAdapterFactory(RxJavaCallAdapterFactory.create()).client(client).addConverterFactory(GsonConverterFactory.create()).build().create((Class<T>) pt.getActualTypeArguments()[0]);
+        mService = builder.baseUrl(getBaseUrl()).addCallAdapterFactory(RxJavaCallAdapterFactory.create()).client(client).addConverterFactory(MyGsonConverterFactory.create()).build().create((Class<T>) pt.getActualTypeArguments()[0]);
     }
 
 }

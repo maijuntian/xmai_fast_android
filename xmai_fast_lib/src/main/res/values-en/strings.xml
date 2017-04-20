@@ -1,4 +1,5 @@
 <resources>
     <string name="loading">loading</string>
     <string name="no_more_content">-- no more anything --</string>
+    <string name="reload">reload</string>
 </resources>

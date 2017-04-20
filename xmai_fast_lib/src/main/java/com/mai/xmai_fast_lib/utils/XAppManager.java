@@ -38,6 +38,17 @@ public class XAppManager {
 		return activityStack;
 	}
 
+	public Activity findActivity(Class<?> cls){
+		for (Activity activity : activityStack)
+		{
+			if (activity.getClass().equals(cls))
+			{
+				return activity;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * 添加Activity到堆栈
 	 */
@@ -77,7 +88,6 @@ public class XAppManager {
 		{
 			activityStack.remove(activity);
 			activity.finish();
-			activity = null;
 		}
 	}
 
@@ -89,7 +99,6 @@ public class XAppManager {
 		if (activity != null)
 		{
 			activityStack.remove(activity);
-			activity = null;
 		}
 	}
 
@@ -106,7 +115,8 @@ public class XAppManager {
 				finishActviity = activity;
 			}
 		}
-		finishActviity.finish();
+		if(finishActviity != null)
+			finishActviity.finish();
 	}
 
 	/**

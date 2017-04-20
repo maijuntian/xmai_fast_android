@@ -42,7 +42,13 @@ public abstract class BaseListViewAdapter<T> extends BaseAdapter {
         context = parent.getContext();
         BaseViewHolder baseViewHolder = BaseViewHolder.get(convertView, parent, bindLayoutId(position), isRecycle());
         baseViewHolder.setPosition(position);
-        initView(mData.get(position), baseViewHolder);
+        T data;
+        if(mData == null || mData.size() <= position){
+            data = null;
+        } else {
+            data = mData.get(position);
+        }
+        initView(data, baseViewHolder);
         return baseViewHolder.getView();
     }
 

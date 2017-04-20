@@ -5,17 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-import android.widget.Switch;
-
 
 import com.mai.xmai_fast_lib.R;
 import com.mai.xmai_fast_lib.baseadapter.listener.RBaseAnimator;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnItemClickListener;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnItemLongClickListener;
 import com.mai.xmai_fast_lib.baseadapter.listener.ROnLoadingMoreListener;
-import com.mai.xmai_fast_lib.utils.MLog;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +19,7 @@ import java.util.List;
  * 1、加头部和底部 16/5/23
  * 2、加上拉加载更多(仅支持LinearLayout) 16/5/24
  * 3、加动画效果(预设一些动画效果，开发者可以另外加一些动画效果) 16/6/01
+ * 4、加重新加载
  * Created by mai on 16/4/29.
  */
 public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewHolder> {
@@ -49,7 +45,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     private boolean isLoadMoreComplete = false;
     private boolean isLoading = false;
-
+    private boolean isTimeOut = false;
 
     List<T> mData;
 
@@ -77,10 +73,12 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
                 baseRecyclerViewHolder = new BaseRecyclerViewHolder(mFooterView, viewType);
                 break;
             case VIEWTYPE_LOADMORE_VIEW:
-                if(mLoadingMoreView == null)
+                if (mLoadingMoreView == null)
                     mLoadingMoreView = inflateView(bindLoadingView(), parent);
 
                 baseRecyclerViewHolder = new BaseRecyclerViewHolder(mLoadingMoreView, viewType);
+                initReloadClickListener(baseRecyclerViewHolder);
+
                 break;
             default:
                 baseRecyclerViewHolder = new BaseRecyclerViewHolder(inflateView(viewType, parent), VIEWTYPE_DEFAULT_VIEW);
@@ -98,6 +96,18 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         }
     }
 
+    protected void initReloadClickListener(BaseRecyclerViewHolder baseRecyclerViewHolder) {
+            baseRecyclerViewHolder.setOnItemClickListener(new ROnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    if (isTimeOut) {
+                        isTimeOut = false;
+                        notifyDataSet();
+                    }
+                }
+            });
+    }
+
 
     @Override
     public void onBindViewHolder(BaseRecyclerViewHolder holder, int position) {
@@ -108,11 +118,15 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
             case VIEWTYPE_FOOTER_VIEW: //底部
                 break;
             case VIEWTYPE_LOADMORE_VIEW: //加载更多
-                if(!isLoadMoreComplete){ //还有更多
-                    if(!isLoading) {
-                        isLoading = true;
-                        onLoadingMoreListener.onLoadingMore();
-                        initLoadingView(holder.getBaseViewHolderImpl());
+                if (!isLoadMoreComplete) { //还有更多
+                    if (!isLoading) { //没有在加载
+                        if(isTimeOut){ //超时了
+                            initReloadView(holder.getBaseViewHolderImpl());
+                        } else { //继续加载
+                            isLoading = true;
+                            onLoadingMoreListener.onLoadingMore();
+                            initLoadingView(holder.getBaseViewHolderImpl());
+                        }
                     }
                 } else { //没有更多
                     initFinishLoadView(holder.getBaseViewHolderImpl());
@@ -120,15 +134,21 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
                 break;
             case VIEWTYPE_DEFAULT_VIEW:
                 holder.setmRealPosition(position - getHearderCount());
-                initView(mData.get(position - getHearderCount()), holder.getBaseViewHolderImpl());
+                T data;
+                if (mData == null || mData.size() <= position - getHearderCount()) {
+                    data = null;
+                } else {
+                    data = mData.get(position - getHearderCount());
+                }
+                initView(data, holder.getBaseViewHolderImpl());
                 addAnimator(holder);
                 break;
         }
     }
 
-    protected void addAnimator(BaseRecyclerViewHolder holder){
-        if(isAnimator()){ //加动画效果
-            if(isRecycleAnimator || holder.getRealPosition() > mLastAnimatorPosition){
+    protected void addAnimator(BaseRecyclerViewHolder holder) {
+        if (isAnimator()) { //加动画效果
+            if (isRecycleAnimator || holder.getRealPosition() > mLastAnimatorPosition) {
                 mAnimator.getAnimator(holder.itemView).start();
                 mLastAnimatorPosition = holder.getRealPosition();
             }
@@ -148,26 +168,25 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         } else if (hasFooter() && position == mData.size() + getHearderCount()) {
             return VIEWTYPE_FOOTER_VIEW;
         } else if (isLoadMore() && position == mData.size() + getHearderCount() + getFooterCount()) {
-            MLog.log("VIEWTYPE_LOADMORE_VIEW  " + position);
             return VIEWTYPE_LOADMORE_VIEW;
         }
         return bindLayoutId(position - getHearderCount());
     }
 
 
-    public void addDatas(List<T> newDatas){
+    public void addDatas(List<T> newDatas) {
         mData.addAll(newDatas);
         isLoading = false;
         notifyDataSetChanged();
     }
 
-    public void removeDatas(List<T> removeDatas){
+    public void removeDatas(List<T> removeDatas) {
         mData.removeAll(removeDatas);
         isLoading = false;
         notifyDataSetChanged();
     }
 
-    public void notifyDataSet(){
+    public void notifyDataSet() {
         isLoading = false;
         notifyDataSetChanged();
     }
@@ -177,14 +196,22 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
     }
 
 
-    protected void initLoadingView(BaseViewHolderImpl viewHolder){
+    protected void initLoadingView(BaseViewHolderImpl viewHolder) {
         viewHolder.setVisibility(R.id.loading_view, View.VISIBLE)
-            .setVisibility(R.id.tv_complete, View.GONE);
+                .setVisibility(R.id.tv_reload, View.GONE)
+                .setVisibility(R.id.tv_complete, View.GONE);
     }
 
-    protected void initFinishLoadView(BaseViewHolderImpl viewHolder){
+    protected void initFinishLoadView(BaseViewHolderImpl viewHolder) {
         viewHolder.setVisibility(R.id.loading_view, View.GONE)
-                .setVisibility(R.id.tv_complete, View.VISIBLE);
+                .setVisibility(R.id.tv_complete, View.VISIBLE)
+                .setVisibility(R.id.tv_reload, View.GONE);
+    }
+
+    protected void initReloadView(BaseViewHolderImpl viewHolder){
+        viewHolder.setVisibility(R.id.loading_view, View.GONE)
+                .setVisibility(R.id.tv_complete, View.GONE)
+                .setVisibility(R.id.tv_reload, View.VISIBLE);;
     }
 
     public void addHeaderView(View view) {
@@ -266,6 +293,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     /**
      * 加载更多的界面
+     *
      * @return
      */
     protected int bindLoadingView() {
@@ -274,6 +302,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
 
     /**
      * 设置是否完成加载更多
+     *
      * @param loadMoreComplete
      */
     public void setLoadMoreComplete(boolean loadMoreComplete) {
@@ -282,20 +311,26 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         notifyDataSetChanged();
     }
 
-    public boolean isAnimator(){
+    public void setTimeOut(boolean isTimeOut) {
+        this.isTimeOut = isTimeOut;
+    }
+
+    public boolean isAnimator() {
         return mAnimator != null;
     }
 
     /**
      * 设置动画效果
+     *
      * @param animator
      */
-    public void setAnimator(RBaseAnimator animator){
+    public void setAnimator(RBaseAnimator animator) {
         this.mAnimator = animator;
     }
 
     /**
      * 设置是否重复动画
+     *
      * @param recycleAnimator
      */
     public void setRecycleAnimator(boolean recycleAnimator) {

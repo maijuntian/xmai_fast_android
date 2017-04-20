@@ -39,7 +39,14 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View view = mViews.get(position);
         BaseViewHolder baseViewHolder = BaseViewHolder.get(view, container, bindLayoutId(), isRecycle());
-        initView(mData.get(position), baseViewHolder);
+
+        T data;
+        if(mData == null || mData.size() <= position){
+            data = null;
+        } else {
+            data = mData.get(position);
+        }
+        initView(data, baseViewHolder);
         baseViewHolder.setPosition(position);
         if(view == null)
         	mViews.put(position, baseViewHolder.getView());

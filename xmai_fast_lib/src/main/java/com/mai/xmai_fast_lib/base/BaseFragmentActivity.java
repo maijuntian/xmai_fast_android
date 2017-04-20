@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -16,7 +17,7 @@ import com.mai.xmai_fast_lib.utils.XAppManager;
  * @author maijuntian
  *
  */
-public abstract class BaseFragmentActivity extends FragmentActivity {
+public abstract class BaseFragmentActivity extends AppCompatActivity {
 
 	protected ProgressDialog pDialog;
 	private String log_tag = this.getClass().getSimpleName();
