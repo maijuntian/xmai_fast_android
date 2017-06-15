@@ -2,9 +2,9 @@ package com.mai.xmai.basehttp;
 
 import com.mai.xmai_fast_lib.basehttp.HttpResponse;
 
-import retrofit.http.Field;
-import retrofit.http.FormUrlEncoded;
-import retrofit.http.POST;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
 import rx.Observable;
 
 /**

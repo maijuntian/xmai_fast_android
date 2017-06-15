@@ -1,12 +1,19 @@
 package com.mai.xmai_fast_lib.utils;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * created by mai 2016/05/16
  */
 public class SharedPreferencesHelper {
     private static final String SHARED_PATH = "mai_shared";
+
+    private Map<String, Object> cache = new HashMap<>();
+
     private static SharedPreferencesHelper instance;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
@@ -25,13 +32,20 @@ public class SharedPreferencesHelper {
 
     public long getLongValue(String key) {
         if (key != null && !key.equals("")) {
-            return sp.getLong(key, 0);
+            if (cache.containsKey(key))
+                return (long) cache.get(key);
+            long value = sp.getLong(key, 0);
+            cache.put(key, value);
+            return value;
         }
         return 0;
     }
 
     public String getStringValue(String key) {
         if (key != null && !key.equals("")) {
+
+            if (cache.containsKey(key))
+                return (String) cache.get(key);
             return sp.getString(key, null);
         }
         return null;
@@ -39,28 +53,44 @@ public class SharedPreferencesHelper {
 
     public int getIntValue(String key) {
         if (key != null && !key.equals("")) {
-            return sp.getInt(key, 0);
+            if (cache.containsKey(key))
+                return (int) cache.get(key);
+            int value = sp.getInt(key, 0);
+            cache.put(key, value);
+            return value;
         }
         return 0;
     }
 
-    public int getIntValueByDefault(String key)
-    {
+    public int getIntValueByDefault(String key) {
         if (key != null && !key.equals("")) {
-            return sp.getInt(key, 0);
+            if (cache.containsKey(key))
+                return (int) cache.get(key);
+            int value = sp.getInt(key, 0);
+            cache.put(key, value);
+            return value;
         }
         return 0;
     }
+
     public boolean getBooleanValue(String key) {
         if (key != null && !key.equals("")) {
-            return sp.getBoolean(key, false);
+            if (cache.containsKey(key))
+                return (boolean) cache.get(key);
+            boolean value = sp.getBoolean(key, false);
+            cache.put(key, value);
+            return value;
         }
         return true;
     }
 
     public float getFloatValue(String key) {
         if (key != null && !key.equals("")) {
-            return sp.getFloat(key, 0);
+            if (cache.containsKey(key))
+                return (float) cache.get(key);
+            float value = sp.getFloat(key, 0);
+            cache.put(key, value);
+            return value;
         }
         return 0;
     }
@@ -70,6 +100,7 @@ public class SharedPreferencesHelper {
             editor = sp.edit();
             editor.putString(key, value);
             editor.commit();
+            cache.put(key, value);
         }
     }
 
@@ -78,6 +109,7 @@ public class SharedPreferencesHelper {
             editor = sp.edit();
             editor.putInt(key, value);
             editor.commit();
+            cache.put(key, value);
         }
     }
 
@@ -86,6 +118,7 @@ public class SharedPreferencesHelper {
             editor = sp.edit();
             editor.putBoolean(key, value);
             editor.commit();
+            cache.put(key, value);
         }
     }
 
@@ -94,6 +127,7 @@ public class SharedPreferencesHelper {
             editor = sp.edit();
             editor.putLong(key, value);
             editor.commit();
+            cache.put(key, value);
         }
     }
 
@@ -102,6 +136,9 @@ public class SharedPreferencesHelper {
             editor = sp.edit();
             editor.putFloat(key, value);
             editor.commit();
+
+            cache.put(key, value);
         }
     }
+
 }

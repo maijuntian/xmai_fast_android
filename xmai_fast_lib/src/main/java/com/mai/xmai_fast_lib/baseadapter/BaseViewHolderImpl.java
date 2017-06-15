@@ -64,7 +64,6 @@ public class BaseViewHolderImpl {
      * @param resIds
      * @param visibility visible为false的时候设置不显示类型
      * @param isVisibled 是否显示
-     * @return
      */
     public BaseViewHolderImpl setVisibility(int visibility, boolean isVisibled, int... resIds) {
         for (int i = 0; i < resIds.length; i++) {
@@ -90,7 +89,6 @@ public class BaseViewHolderImpl {
      * 设置tag
      * @param resId
      * @param tag
-     * @return
      */
     public BaseViewHolderImpl setTag(int resId, Object tag) {
         findViewById(resId).setTag(tag);
@@ -101,7 +99,6 @@ public class BaseViewHolderImpl {
      * 设置图片
      * @param resId
      * @param drawable
-     * @return
      */
     public BaseViewHolderImpl setImageDrawable(int resId, Drawable drawable) {
         ((ImageView) findViewById(resId)).setImageDrawable(drawable);
@@ -123,7 +120,6 @@ public class BaseViewHolderImpl {
      * 设置是否选中
      * @param resId
      * @param checked
-     * @return
      */
     public BaseViewHolderImpl setChecked(int resId, boolean checked) {
         ((CompoundButton) findViewById(resId)).setChecked(checked);
@@ -136,7 +132,6 @@ public class BaseViewHolderImpl {
      * @param resId
      * @param visibility visible为false的时候设置不显示类型
      * @param isVisibled    是否显示
-     * @return
      */
     public BaseViewHolderImpl setVisibility(int resId, int visibility, boolean isVisibled) {
         if (isVisibled) {
@@ -151,7 +146,6 @@ public class BaseViewHolderImpl {
      * 设置可见度
      * @param resId 控件id
      * @param visibility  是否显示
-     * @return
      */
     public BaseViewHolderImpl setVisibility(int resId, int visibility) {
         findViewById(resId).setVisibility(visibility);

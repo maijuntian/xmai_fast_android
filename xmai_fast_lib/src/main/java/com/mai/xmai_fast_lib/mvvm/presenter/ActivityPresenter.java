@@ -22,7 +22,7 @@ public abstract class ActivityPresenter<T extends IDelegate> extends BaseFragmen
 	
     public T viewDelegate;
 
-    public ActivityPresenter() {
+    public void initDelegate() {
 		ParameterizedType pt = (ParameterizedType) this.getClass()
 				.getGenericSuperclass(); 
 		Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
@@ -39,6 +39,7 @@ public abstract class ActivityPresenter<T extends IDelegate> extends BaseFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initDelegate();
         viewDelegate.create(getLayoutInflater(), null, savedInstanceState);
         setContentView(viewDelegate.getRootView());
         ButterKnife.bind(this);

@@ -55,7 +55,6 @@ public abstract class BaseListViewAdapter<T> extends BaseAdapter {
     /**
      * 是否循环利用布局
      *
-     * @return
      */
     protected boolean isRecycle() {
         return true;
@@ -64,7 +63,6 @@ public abstract class BaseListViewAdapter<T> extends BaseAdapter {
     /**
      * 绑定相对应的item界面
      *
-     * @return
      */
     protected abstract int bindLayoutId(int position);
 

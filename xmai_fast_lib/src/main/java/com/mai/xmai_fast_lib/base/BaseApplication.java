@@ -1,6 +1,7 @@
 package com.mai.xmai_fast_lib.base;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -19,12 +20,13 @@ public abstract class BaseApplication extends Application{
     public void onCreate() {
         super.onCreate();
         this.instance = this;
-        CrashReport.initCrashReport(getApplicationContext(), getBuglyAppid(), false);
+        if(!TextUtils.isEmpty(getBuglyAppid())) {
+            CrashReport.initCrashReport(getApplicationContext(), getBuglyAppid(), false);
+        }
     }
 
     /**
      * bugly APPId
-     * @return
      */
     public abstract String getBuglyAppid();
 }

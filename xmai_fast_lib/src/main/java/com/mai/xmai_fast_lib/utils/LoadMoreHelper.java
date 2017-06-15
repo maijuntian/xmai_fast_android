@@ -1,5 +1,6 @@
 package com.mai.xmai_fast_lib.utils;
 
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 
 import com.mai.xmai_fast_lib.baseadapter.BaseRecyclerViewAdapter;
@@ -66,6 +67,11 @@ public class LoadMoreHelper<T> {
         this.finishListener = finishListener;
     }
 
+    public void notifyDataSetChanged() {
+        if (mAdapter != null)
+            mAdapter.notifyDataSet();
+    }
+
     public void notifyAdapter(List<T> datas) {
         if (page == 1) {
             mData.clear();
@@ -110,7 +116,7 @@ public class LoadMoreHelper<T> {
         observable.subscribe(new Action1<List<T>>() {
             @Override
             public void call(List<T> list) {
-                if(finishListener != null)
+                if (finishListener != null)
                     finishListener.onFinish(true);
                 notifyAdapter(list);
                 page++;
@@ -118,11 +124,23 @@ public class LoadMoreHelper<T> {
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                if(finishListener != null)
+                if (finishListener != null)
                     finishListener.onFinish(false);
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        setReload();
+                    }
+                });
                 throwable.printStackTrace();
             }
         });
+    }
+
+    public void setReload() {
+        mAdapter.setTimeOut(true);
+        mAdapter.notifyDataSet();
     }
 
     public static class Builder<T> {

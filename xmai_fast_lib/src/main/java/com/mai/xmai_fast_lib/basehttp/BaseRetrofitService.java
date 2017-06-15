@@ -3,22 +3,24 @@ package com.mai.xmai_fast_lib.basehttp;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.mai.xmai_fast_lib.R;
 import com.mai.xmai_fast_lib.exception.NetWorkException;
 import com.mai.xmai_fast_lib.exception.ServerException;
 import com.mai.xmai_fast_lib.utils.MLog;
 import com.mai.xmai_fast_lib.utils.NetUtils;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-import retrofit.GsonConverterFactory;
-import retrofit.MyGsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -38,7 +40,7 @@ public abstract class BaseRetrofitService<T> {
     protected abstract String getBaseUrl();
 
     protected void notNetWork(Context context) {
-        Toast.makeText(context, "网络不可用", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, R.string.network_not_available, Toast.LENGTH_SHORT).show();
     }
 
     protected void serverError(Context context, int code, String msg) {
@@ -54,17 +56,20 @@ public abstract class BaseRetrofitService<T> {
      *
      * @param observable
      * @param context
-     * @return
      */
     protected <M> Observable<M> checkNetWork(Observable<M> observable, final Context context) {
         return observable.doOnSubscribe(new Action0() {
             @Override
             public void call() {
                 if (!NetUtils.isNetworkAvailable(context)) {
-                    throw new NetWorkException("网络不可用");
+                    throw new NetWorkException("The network is not available");
                 }
             }
         });
+    }
+
+    protected void timeout(Context context) {
+        Toast.makeText(context, R.string.time_out, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -72,7 +77,6 @@ public abstract class BaseRetrofitService<T> {
      *
      * @param observable
      * @param context
-     * @return
      */
     protected <M> Observable<M> showDialog(Observable<M> observable, final Context context) {
         return observable.doOnSubscribe(new Action0() {
@@ -93,7 +97,6 @@ public abstract class BaseRetrofitService<T> {
      *
      * @param observable
      * @param <M>
-     * @return
      */
     protected <M> Observable<M> checkResult(Observable<HttpResponse<M>> observable) {
         return observable.map(new Func1<HttpResponse<M>, M>() {
@@ -116,7 +119,6 @@ public abstract class BaseRetrofitService<T> {
      * @param observable
      * @param context
      * @param <M>
-     * @return
      */
     protected <M> Observable<M> checkError(Observable<M> observable, final Context context) {
         return observable.doOnError(new Action1<Throwable>() {
@@ -128,6 +130,8 @@ public abstract class BaseRetrofitService<T> {
                 } else if (throwable instanceof ServerException) {
                     ServerException serverException = (ServerException) throwable;
                     serverError(context, serverException.getCode(), serverException.getMessage());
+                } else if (throwable instanceof SocketTimeoutException) {
+                    timeout(context);
                 } else {
                     throwable.printStackTrace();
                 }
@@ -141,8 +145,6 @@ public abstract class BaseRetrofitService<T> {
 
     /**
      * 超时时间 （单位ms）
-     *
-     * @return
      */
     protected int getTimeOut() {
         return TIME_OUT;
@@ -150,22 +152,27 @@ public abstract class BaseRetrofitService<T> {
 
     public BaseRetrofitService() {
 
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                MLog.log(message);
+            }
+        });
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         ParameterizedType pt = (ParameterizedType) this.getClass()
                 .getGenericSuperclass();
 
         Retrofit.Builder builder = new Retrofit.Builder();
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(getTimeOut(), TimeUnit.SECONDS);//设置超时时间
-        client.interceptors().add(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                MLog.log("访问的地址", chain.request().toString());
-                Response response = chain.proceed(chain.request());
-                return response;
-            }
-        });
-        client.setRetryOnConnectionFailure(true);
-        mService = builder.baseUrl(getBaseUrl()).addCallAdapterFactory(RxJavaCallAdapterFactory.create()).client(client).addConverterFactory(MyGsonConverterFactory.create()).build().create((Class<T>) pt.getActualTypeArguments()[0]);
+
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(getTimeOut(), TimeUnit.MILLISECONDS)
+                .addInterceptor(logging)
+                .build();
+        mService = builder.baseUrl(getBaseUrl()).addCallAdapterFactory(RxJavaCallAdapterFactory.create()).client(client).addConverterFactory(GsonConverterFactory.create()).build().create((Class<T>) pt.getActualTypeArguments()[0]);
     }
 
 }

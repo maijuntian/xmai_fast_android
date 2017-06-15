@@ -280,7 +280,6 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
     /**
      * 绑定相对应的item界面
      *
-     * @return
      */
     protected abstract int bindLayoutId(int position);
 
@@ -294,7 +293,6 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
     /**
      * 加载更多的界面
      *
-     * @return
      */
     protected int bindLoadingView() {
         return R.layout.default_loading;
