@@ -47,7 +47,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
     private boolean isLoading = false;
     private boolean isTimeOut = false;
 
-    List<T> mData;
+    protected List<T> mData;
 
     public BaseRecyclerViewAdapter(List<T> mData) {
         this.mData = mData;

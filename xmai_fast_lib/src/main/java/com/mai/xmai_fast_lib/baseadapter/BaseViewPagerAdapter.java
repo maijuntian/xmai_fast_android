@@ -38,7 +38,7 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = mViews.get(position);
-        BaseViewHolder baseViewHolder = BaseViewHolder.get(view, container, bindLayoutId(), isRecycle());
+        BaseViewHolder baseViewHolder = BaseViewHolder.get(view, container, bindLayoutId(position), isRecycle());
 
         T data;
         if(mData == null || mData.size() <= position){
@@ -46,8 +46,8 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
         } else {
             data = mData.get(position);
         }
-        initView(data, baseViewHolder);
         baseViewHolder.setPosition(position);
+        initView(data, baseViewHolder);
         if(view == null)
         	mViews.put(position, baseViewHolder.getView());
         container.addView(baseViewHolder.getView());
@@ -64,7 +64,7 @@ public abstract class BaseViewPagerAdapter<T> extends PagerAdapter {
     /**
 	 * 绑定相对应的item界面
 	 */
-	protected abstract int bindLayoutId();
+	protected abstract int bindLayoutId(int position);
 	
 	/**
 	 * 将ViewHolder的控件跟内容绑定在一起

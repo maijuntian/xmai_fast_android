@@ -19,7 +19,19 @@ public class MLog {
             Log.e("Mlog-->" + tag + "--->", msg);
     }
 
+    public static void logFile(String msg){
+        if(isLog)
+            LogToFile.writeToFile("Mlog-->" + TAG, msg);
+    }
+
+    public static void logFile(String tag, String msg){
+        if(isLog)
+            LogToFile.writeToFile("Mlog-->" + tag + "--->", msg);
+    }
+
     public static void setIsLog(boolean isLog) {
         MLog.isLog = isLog;
     }
+
+
 }

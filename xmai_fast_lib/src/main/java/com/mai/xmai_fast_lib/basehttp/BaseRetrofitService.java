@@ -150,12 +150,21 @@ public abstract class BaseRetrofitService<T> {
         return TIME_OUT;
     }
 
+
+    /**
+     * http请求日志
+     * @param message
+     */
+    protected void logHttpMessage(String message){
+        MLog.log(message);
+    }
+
     public BaseRetrofitService() {
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                MLog.log(message);
+                logHttpMessage(message);
             }
         });
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);

@@ -30,19 +30,24 @@ public class BaseHttpActivity extends Activity {
 
     @OnClick(R.id.button)
     public void button() {
-        KaolaApi.getInstance().getDayBriefReport(BaseHttpActivity.this, "b345b8d87ae14768b312fbdfd72134e1", "2016-06-01")
-                .subscribe(new Action1<DayBriefReport>() {
-                    @Override
-                    public void call(DayBriefReport dayBriefReportKaolaResponse) {
-                        MLog.log(dayBriefReportKaolaResponse.toString());
-                        textView.setText(dayBriefReportKaolaResponse.toString());
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
+        for (int i = 0; i < 5; i++) {
+            KaolaApi.getInstance().getDayBriefReport(BaseHttpActivity.this, "b345b8d87ae14768b312fbdfd72134e1", "2016-06-01")
+                    .subscribe(new Action1<DayBriefReport>() {
+                        @Override
+                        public void call(DayBriefReport dayBriefReportKaolaResponse) {
+                            MLog.log(dayBriefReportKaolaResponse.toString());
+                            textView.setText(dayBriefReportKaolaResponse.toString());
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
 
-                    }
-                });
+                        }
+                    });
+        }
+
+
+
     }
 
 }

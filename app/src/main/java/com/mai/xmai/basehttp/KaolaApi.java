@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.mai.xmai_fast_lib.basehttp.BaseRetrofitService;
+import com.mai.xmai_fast_lib.utils.MLog;
 
 import rx.Observable;
 import rx.functions.Action0;
@@ -22,6 +23,17 @@ public class KaolaApi extends BaseRetrofitService<IKaolaService> {
             mKaolaApi = new KaolaApi();
         }
         return mKaolaApi;
+    }
+
+    @Override
+    protected void logHttpMessage(final String message) {
+        super.logHttpMessage(message);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MLog.logFile(message);
+            }
+        }).start();
     }
 
     public Observable<DayBriefReport> getDayBriefReport(Context context, String uid, String startDate) {

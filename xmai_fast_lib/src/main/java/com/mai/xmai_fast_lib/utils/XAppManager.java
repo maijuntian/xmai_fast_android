@@ -7,6 +7,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * activity管理类
@@ -14,7 +15,7 @@ import java.util.Stack;
  * @author maijuntian
  */
 public class XAppManager {
-    private static Stack<Activity> activityStack;
+    private static CopyOnWriteArrayList<Activity> activityStack;
     private static XAppManager instance;
 
     private XAppManager() {
@@ -34,7 +35,7 @@ public class XAppManager {
         return instance;
     }
 
-    public static Stack<Activity> getActivityStack() {
+    public static CopyOnWriteArrayList<Activity> getActivityStack() {
         return activityStack;
     }
 
@@ -52,7 +53,7 @@ public class XAppManager {
      */
     public void addActivity(Activity activity) {
         if (activityStack == null) {
-            activityStack = new Stack<Activity>();
+            activityStack = new CopyOnWriteArrayList<>();
         }
         activityStack.add(activity);
     }
@@ -61,7 +62,7 @@ public class XAppManager {
      * 获取当前Activity（堆栈中最后一个压入的）
      */
     public Activity currentActivity() {
-        Activity activity = activityStack.lastElement();
+        Activity activity = activityStack.get(activityStack.size() - 1);
         return activity;
     }
 
@@ -69,7 +70,7 @@ public class XAppManager {
      * 结束当前Activity（堆栈中最后一个压入的）
      */
     public void finishActivity() {
-        Activity activity = activityStack.lastElement();
+        Activity activity = currentActivity();
         finishActivity(activity);
     }
 
@@ -96,26 +97,32 @@ public class XAppManager {
      * 结束指定类名的Activity
      */
     public void finishActivity(Class<?> cls) {
-        Activity finishActviity = null;
         for (Activity activity : activityStack) {
             if (activity.getClass().equals(cls)) {
-                finishActviity = activity;
+                activity.finish();
             }
         }
-        if (finishActviity != null)
-            finishActviity.finish();
     }
 
     /**
      * 结束所有Activity
      */
     public void finishAllActivity() {
-        List<Activity> acts = new ArrayList<>();
-        acts.addAll(activityStack);
-        for (Activity act : acts) {
+        for (Activity act : activityStack) {
             act.finish();
         }
         activityStack.clear();
+    }
+
+    public void doInAllActivity(final DoAllActivityListener listener) {
+        for (final Activity act : activityStack) {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    listener.doAll(act);
+                }
+            });
+        }
     }
 
     public void finishALLActivityExcept(Class clazz) {
@@ -150,5 +157,9 @@ public class XAppManager {
                 System.exit(0);
             }
         }
+    }
+
+    public interface DoAllActivityListener {
+        void doAll(Activity act);
     }
 }
