@@ -99,7 +99,7 @@ public class SharedPreferencesHelper {
         if (key != null && !key.equals("")) {
             editor = sp.edit();
             editor.putString(key, value);
-            editor.commit();
+            editor.apply();
             cache.put(key, value);
         }
     }
@@ -108,7 +108,7 @@ public class SharedPreferencesHelper {
         if (key != null && !key.equals("")) {
             editor = sp.edit();
             editor.putInt(key, value);
-            editor.commit();
+            editor.apply();
             cache.put(key, value);
         }
     }
@@ -117,7 +117,7 @@ public class SharedPreferencesHelper {
         if (key != null && !key.equals("")) {
             editor = sp.edit();
             editor.putBoolean(key, value);
-            editor.commit();
+            editor.apply();
             cache.put(key, value);
         }
     }
@@ -126,7 +126,7 @@ public class SharedPreferencesHelper {
         if (key != null && !key.equals("")) {
             editor = sp.edit();
             editor.putLong(key, value);
-            editor.commit();
+            editor.apply();
             cache.put(key, value);
         }
     }
@@ -135,7 +135,7 @@ public class SharedPreferencesHelper {
         if (key != null && !key.equals("")) {
             editor = sp.edit();
             editor.putFloat(key, value);
-            editor.commit();
+            editor.apply();
 
             cache.put(key, value);
         }
